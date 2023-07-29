@@ -36,11 +36,30 @@ namespace JZ计算机软件开发语言
             }
             File.WriteAllText(@"D:\jz.java",Code);
             new function().cmdProcessStart(@"D:\jz.jz");
+
+                    startInfo.FileName = "cmd.exe";
+                    startInfo.Arguments = "/k java " + Path + " & echo jz计算机" +
+                        "软件编程语言由得快科技开发制作 & echo 若发现bug请联系QQ:2241105683";
+
+                    startInfo.RedirectStandardOutput = false;
+                    startInfo.UseShellExecute = true;
+                    startInfo.CreateNoWindow = false;
+
+                    cmdProcess.StartInfo = startInfo;
+                    cmdProcess.Start();
+                }
+                else
+                {
+                    MessageBox.Show("您选择的代码文件不存在");
+                }
+            }
+            else
+            {
+                Path = @"C:\temp\jz\jz.jz";
+                MessageBox.Show("未能正确识别的jz文件\n请检查文件后缀名是否正确");
+            }
             
-
-
         }
-        
         private void Form1_Load(object sender, EventArgs e)
         {
 
