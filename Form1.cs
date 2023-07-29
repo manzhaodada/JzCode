@@ -24,6 +24,7 @@ namespace JZ计算机软件开发语言
         {
 
         }
+        private static String improt = "import java.util.*;\nimport java.math.*;\nimport java.io.*;\n";
 
         private void button_Run_Click(object sender, EventArgs e)
         {
@@ -39,7 +40,7 @@ namespace JZ计算机软件开发语言
                     filePath = filePath + temp;
                 }
                 filePath = filePath + ".jz";
-                File.WriteAllText(filePath,new Form1().textBox_Code.Text);
+                File.WriteAllText(filePath,this.textBox_Code.Text, Encoding.UTF8);
             }
             else
             {
@@ -51,7 +52,7 @@ namespace JZ计算机软件开发语言
                     filePath = filePath + temp.ToString();
                 }
                 filePath = filePath + ".jz";
-                File.WriteAllText(filePath, new Form1().textBox_Code.Text);
+                File.WriteAllText(filePath, this.textBox_Code.Text);
             }
             String lineCode, Code = null;
             List<string> lines = new List<string>
@@ -66,7 +67,8 @@ namespace JZ计算机软件开发语言
             {
                 Code = Code + lines[i] + "\n";
             }
-            File.WriteAllText(@"D:\jz.java", Code);
+            String codeTemp = improt + Code;
+            File.WriteAllText(@"D:\jz.java", codeTemp);
             new function().cmdProcessStart(@"D:\jz.jz");
         }
 
@@ -85,12 +87,15 @@ namespace JZ计算机软件开发语言
             {
                 Code = Code + lines[i] + "\n";
             }
-            File.WriteAllText(@"D:\jz.java", Code);
+            String codeTemp = improt + Code;
+            File.WriteAllText(@"D:\jz.java", codeTemp);
             new function().cmdProcessStart(@"D:\jz.jz");
         }
 
         private void button_Open_Click(object sender, EventArgs e)
         {
+            this.openFileDialog_Open.Filter = "Jz Code (*.jz)|*.jz";
+            this.openFileDialog_Open.FileName = null;
             this.openFileDialog_Open.ShowDialog();
         }
 

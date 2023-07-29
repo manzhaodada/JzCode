@@ -13,17 +13,28 @@ namespace JzCode
     {
         public static string translateJzCode(string lineJzCode)
         {
-            for (int i = 0; i < database.englishData.Length; i++)
+            for (int i = 0; i < database.chineseData.Length; i++)
             {
                 string temp = database.chineseData[i];
                 bool state = lineJzCode.Contains(temp);
                 if (state == true)
                 {
-                    temp = database.englishData[i];
+                    temp = database.getDataBase(temp);
                     lineJzCode = lineJzCode.Replace(database.chineseData[i], temp);
                 }
             }
+            for (int i = 0; i < specialdatabase.englishbase.Length; i++)
+            {
+                string temp = specialdatabase.Chinesebase[i];
+                bool state = lineJzCode.Contains(temp);
+                if (state == true)
+                {
+                    temp = specialdatabase.englishbase[i];
+                    lineJzCode = lineJzCode.Replace(specialdatabase.Chinesebase[i], temp);
+                }
+            }
             return lineJzCode;
+            //todo 后续改为跳转至特殊函数处理 (***已处理***)
         }
 
         public String randomLetter(int randomNext)
@@ -77,8 +88,8 @@ namespace JzCode
                     ProcessStartInfo startInfo = new ProcessStartInfo();
 
                     startInfo.FileName = "cmd.exe";
-                    startInfo.Arguments = "/k java " + Path + " & echo jz计算机" +
-                        "软件编程语言由得快科技开发制作 & echo 若发现bug请联系QQ:2241105683";
+                    startInfo.Arguments = "/k "+  "echo jz计算机软件编程语言由得快科技开发" +
+                        "制作 & echo 若发现bug请联系QQ:2241105683"+ "& java -Dfile.encoding=UTF-8 " + Path ;
 
                     startInfo.RedirectStandardOutput = false;
                     startInfo.UseShellExecute = true;
