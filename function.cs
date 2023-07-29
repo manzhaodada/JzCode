@@ -35,6 +35,36 @@ namespace JzCode
             return letterArrays[randomNext];
         }
 
+        public static String getMainClassName()
+        {
+            //todo 存在bug——如果#主类后没有{可能也会get (***已修复***)
+            String codeTemp = new Form1().getTextBox_Code();
+            List<String> lines = new List<String>(codeTemp.Split('\n'));
+            int start,end = 0;
+            for(int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].IndexOf("#主类 ") != -1)
+                {
+                    start = lines[i].IndexOf("#主类 ");
+                    start += "#主类 ".Length;
+                    if (lines[i].IndexOf("{",start) != -1)
+                    {
+                        end = lines[i].IndexOf("{", start);
+                        String temp = lines[i].Substring(start,end-start);
+                        if(temp.Equals(" ") || temp.Equals(null))
+                        {
+                            return "error:主类名称未设置";
+                        }
+                        else
+                        {
+                            return temp;
+                        }
+                    }
+                }
+            }
+            return "error:代码内未找到主类";
+        }
+
         public void cmdProcessStart(String Path)
         {
             Path = Path.Replace(".jz", ".java");

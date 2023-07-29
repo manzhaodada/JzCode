@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using JzCode;
+using System.Runtime.CompilerServices;
 
 namespace JZ计算机软件开发语言
 {
@@ -86,6 +87,69 @@ namespace JZ计算机软件开发语言
             }
             File.WriteAllText(@"D:\jz.java", Code);
             new function().cmdProcessStart(@"D:\jz.jz");
+        }
+
+        private void button_Open_Click(object sender, EventArgs e)
+        {
+            this.openFileDialog_Open.ShowDialog();
+        }
+
+        private void openFileDialog_Open_FileOk(object sender, CancelEventArgs e)
+        {
+            OpenFileDialog openFileDialog = sender as OpenFileDialog;
+            String filePath = openFileDialog.FileName;
+            this.textBox_Code.Text = null;
+            this.textBox_Code.Text = File.ReadAllText(filePath);
+        }
+
+        private void button_Save_Click(object sender, EventArgs e)
+        {
+            String mainClassName = function.getMainClassName();
+            if (mainClassName.Equals("error: 主类名称未设置") ||
+                mainClassName.Equals("error:代码内未找到主类"))
+            {
+                MessageBox.Show(mainClassName);
+            }
+            else
+            {
+                this.saveFileDialog_Save.Filter = "Jz Code (*.jz)|*.jz";
+                this.saveFileDialog_Save.FileName = mainClassName+".jz";
+                this.saveFileDialog_Save.ShowDialog();
+            }
+
+        }
+
+        private void saveFileDialog_Save_FileOk(object sender, CancelEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = sender as SaveFileDialog;
+            String filePath = saveFileDialog.FileName;
+            File.WriteAllText(filePath, getTextBox_Code());
+        }
+
+        public bool setTextBox_Code(String Content)
+        {
+            if (Content.Equals(this.textBox_Code.Text))
+            {
+                String temp = this.textBox_Code.Text;
+                this.textBox_Code.Text = Content;
+                if (!temp.Equals(Content))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public String getTextBox_Code()
+        {
+            return this.textBox_Code.Text;
         }
     }
 }
