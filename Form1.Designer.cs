@@ -28,47 +28,83 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button_Run = new System.Windows.Forms.Button();
+            this.Button_DaBao = new System.Windows.Forms.Button();
+            this.button_Open = new System.Windows.Forms.Button();
+            this.button_Save = new System.Windows.Forms.Button();
+            this.button_Teaching = new System.Windows.Forms.Button();
+            this.textBox_Code = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
-            // button1
+            // button_Run
             // 
-            this.button1.Location = new System.Drawing.Point(312, 172);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(134, 57);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "编译";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button_Run.Location = new System.Drawing.Point(245, 1);
+            this.button_Run.Name = "button_Run";
+            this.button_Run.Size = new System.Drawing.Size(115, 38);
+            this.button_Run.TabIndex = 0;
+            this.button_Run.Text = "运行";
+            this.button_Run.UseVisualStyleBackColor = true;
+            this.button_Run.Click += new System.EventHandler(this.button_Run_Click);
             // 
-            // label1
+            // Button_DaBao
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(156, 278);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(494, 18);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Beta Test ：只支持编译默认创建的jz源码，位置为D:\\jz.jz";
+            this.Button_DaBao.Location = new System.Drawing.Point(366, 1);
+            this.Button_DaBao.Name = "Button_DaBao";
+            this.Button_DaBao.Size = new System.Drawing.Size(115, 38);
+            this.Button_DaBao.TabIndex = 1;
+            this.Button_DaBao.Text = "编译";
+            this.Button_DaBao.UseVisualStyleBackColor = true;
+            this.Button_DaBao.Click += new System.EventHandler(this.Button_DaBao_Click);
             // 
-            // textBox1
+            // button_Open
             // 
-            this.textBox1.Location = new System.Drawing.Point(21, 335);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(753, 93);
-            this.textBox1.TabIndex = 2;
+            this.button_Open.Location = new System.Drawing.Point(3, 1);
+            this.button_Open.Name = "button_Open";
+            this.button_Open.Size = new System.Drawing.Size(115, 38);
+            this.button_Open.TabIndex = 2;
+            this.button_Open.Text = "打开";
+            this.button_Open.UseVisualStyleBackColor = true;
+            // 
+            // button_Save
+            // 
+            this.button_Save.Location = new System.Drawing.Point(124, 1);
+            this.button_Save.Name = "button_Save";
+            this.button_Save.Size = new System.Drawing.Size(115, 38);
+            this.button_Save.TabIndex = 3;
+            this.button_Save.Text = "保存";
+            this.button_Save.UseVisualStyleBackColor = true;
+            // 
+            // button_Teaching
+            // 
+            this.button_Teaching.Location = new System.Drawing.Point(487, 1);
+            this.button_Teaching.Name = "button_Teaching";
+            this.button_Teaching.Size = new System.Drawing.Size(115, 38);
+            this.button_Teaching.TabIndex = 4;
+            this.button_Teaching.Text = "教学实例";
+            this.button_Teaching.UseVisualStyleBackColor = true;
+            // 
+            // textBox_Code
+            // 
+            this.textBox_Code.Font = new System.Drawing.Font("宋体", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.textBox_Code.Location = new System.Drawing.Point(3, 45);
+            this.textBox_Code.Multiline = true;
+            this.textBox_Code.Name = "textBox_Code";
+            this.textBox_Code.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox_Code.Size = new System.Drawing.Size(1255, 615);
+            this.textBox_Code.TabIndex = 5;
+            this.textBox_Code.Text = "#主类 jz{\r\n\r\n    #程序入口{\r\n        #打印并换行(\"Hello JZ\");\r\n    }\r\n\r\n}";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.button1);
+            this.ClientSize = new System.Drawing.Size(1258, 664);
+            this.Controls.Add(this.textBox_Code);
+            this.Controls.Add(this.button_Teaching);
+            this.Controls.Add(this.button_Save);
+            this.Controls.Add(this.button_Open);
+            this.Controls.Add(this.Button_DaBao);
+            this.Controls.Add(this.button_Run);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -79,9 +115,12 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button button_Run;
+        private System.Windows.Forms.Button Button_DaBao;
+        private System.Windows.Forms.Button button_Open;
+        private System.Windows.Forms.Button button_Save;
+        private System.Windows.Forms.Button button_Teaching;
+        private System.Windows.Forms.TextBox textBox_Code;
     }
 }
 
