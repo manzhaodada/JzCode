@@ -1,0 +1,4 @@
+﻿specialdatabase.cs:
+完成
+do{}while();
+for()——计次循环

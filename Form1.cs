@@ -10,6 +10,8 @@ using System.IO;
 using System.Diagnostics;
 using JzCode;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
+using System.Runtime.Remoting.Contexts;
 
 namespace JZ计算机软件开发语言
 {
@@ -56,7 +58,7 @@ namespace JZ计算机软件开发语言
             }
             String lineCode, Code = null;
             List<string> lines = new List<string>
-            (File.ReadAllLines(filePath));
+            (File.ReadAllLines(filePath, Encoding.UTF8));
             int line = lines.Count;
             for (int i = 0; i < line; i++)
             {
@@ -75,9 +77,12 @@ namespace JZ计算机软件开发语言
         private void Button_DaBao_Click(object sender, EventArgs e)
         {
             String lineCode, Code = null;
-            List<string> lines = new List<string>
-            (File.ReadAllLines(@"D:\jz.jz"));
+            lineCode = File.ReadAllText(@"D:\jz.jz");
+            List<string> lines =
+            lineCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             int line = lines.Count;
+            int on, off = 0;
+            bool bracesEqualsState = false;
             for (int i = 0; i < line; i++)
             {
                 lineCode = lines[i];
@@ -87,11 +92,15 @@ namespace JZ计算机软件开发语言
             {
                 Code = Code + lines[i] + "\n";
             }
+            for (int i = 0; i < line; i++)
+            {
+
+            }
+            //已知一个文本被以行分割装在了lines的一个list内，一个int变量linenum控制当前为第多少行，现在需要完成从该行开始，寻找
             String codeTemp = improt + Code;
             File.WriteAllText(@"D:\jz.java", codeTemp);
             new function().cmdProcessStart(@"D:\jz.jz");
         }
-
         private void button_Open_Click(object sender, EventArgs e)
         {
             this.openFileDialog_Open.Filter = "Jz Code (*.jz)|*.jz";
@@ -104,7 +113,7 @@ namespace JZ计算机软件开发语言
             OpenFileDialog openFileDialog = sender as OpenFileDialog;
             String filePath = openFileDialog.FileName;
             this.textBox_Code.Text = null;
-            this.textBox_Code.Text = File.ReadAllText(filePath);
+            this.textBox_Code.Text = File.ReadAllText(filePath, Encoding.UTF8);
         }
 
         private void button_Save_Click(object sender, EventArgs e)
@@ -155,6 +164,11 @@ namespace JZ计算机软件开发语言
         public String getTextBox_Code()
         {
             return this.textBox_Code.Text;
+        }
+
+        private void button_Teaching_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(function.takeMiddle(2,getTextBox_Code()));
         }
     }
 }

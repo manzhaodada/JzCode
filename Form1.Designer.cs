@@ -86,6 +86,7 @@
             this.button_Teaching.TabIndex = 4;
             this.button_Teaching.Text = "教学实例";
             this.button_Teaching.UseVisualStyleBackColor = true;
+            this.button_Teaching.Click += new System.EventHandler(this.button_Teaching_Click);
             // 
             // textBox_Code
             // 
