@@ -7,6 +7,7 @@ using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace JzCode
 {
@@ -34,12 +35,48 @@ namespace JzCode
                     lineJzCode = lineJzCode.Replace(specialdatabase.Chinesebase[i], temp);
                 }
             }
+            
             return lineJzCode;
             //todo 后续改为跳转至特殊函数处理 (***已处理***)
         }
 
-        public static String takeMiddle(int Linenum, String CodeText)
+        public static String takeMiddleMain(String CodeBlock)
         {
+            //取出指定代码块的函数名与参数
+            String temp = null;
+            MatchCollection matches = Regex.Matches(CodeBlock, @"\{([^}]+)\}");
+            foreach (Match match in matches)
+            {
+                temp += match.Groups[1].Value;
+
+            }
+            temp = CodeBlock.Replace(temp, "");
+            temp = temp.Replace("{", "").Replace("}", "");
+            temp = temp.Trim();
+            return temp;
+        }
+
+        public static String takeMiddleorMinddle(String CodeBlock)
+        {
+            String tempCodeBlock = null;
+            //取出指定代码块内{}内的内容
+            MatchCollection matches = Regex.Matches(CodeBlock, @"\{([^}]+)\}");
+            foreach (Match match in matches)
+            {
+                tempCodeBlock += match.Groups[1].Value;
+                
+            }
+            tempCodeBlock += "}";
+            return tempCodeBlock;
+
+        }
+
+        public static String takeMiddle(int Linenum, String CodeText)
+            //此功能目前在开发过程内存在争议，部分支持直接return花括号内的内容，部分支持放回整个函数组，目前开发以返回整个函数组为目标开发
+        {
+            //todo: 此处存在一个BUG，若CodeText内存在有空白行，空白行不会被加入进Lines内，可能会存在当前的line与实际需要读取的line行数
+            //并不相同的bug,后续将lines的读取增加一个判定，为其添加一个判断当前行是否为空白行的功能。
+
             // 将代码文本按照换行符分割成一个字符串列表
             List<string> lines = CodeText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             // 定义一个变量用来记录当前的花括号层数
@@ -76,6 +113,8 @@ namespace JzCode
             return string.Join("\n", block.ToArray());
 
         }
+
+        
 
 
         public static bool equaldBraces(String Line)

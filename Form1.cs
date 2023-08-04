@@ -168,7 +168,15 @@ namespace JZ计算机软件开发语言
 
         private void button_Teaching_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(function.takeMiddle(2,getTextBox_Code()));
+            //MessageBox.Show(specialdatabase.FuncitonBlockSpecia(getTextBox_Code()));
+            MessageBox.Show(function.takeMiddleMain(getTextBox_Code()));
+        }
+
+        public Form getForm1()
+        {
+            Form tempForm = this;
+            return tempForm;
+            
         }
     }
 }

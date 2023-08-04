@@ -1,9 +1,13 @@
-﻿using System;
+﻿using JzCode;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Policy;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace JZ计算机软件开发语言
 {
@@ -38,24 +42,46 @@ namespace JZ计算机软件开发语言
                 indexof = Line.IndexOf(specialFunctionName[i]);
                 if (indexof != -1)
                 {
-                    return specialHandlingFunction(specialFunctionName[i],Line);
+                    return null;//specialHandlingFunction(specialFunctionName[i],Line);
                 }
             }
             return null;
         }
 
-        public static String specialHandlingFunction(String Case,String Line)
+        public static String[] speciaFuncitonBlock =
         {
-            //此方法负责处理特殊函数，传入Case跳转至对应的处理函数
-            switch (Case)
+            "#计次循环"
+        };
+
+        public static String getSpeciaFuncitonBlock(String Case)
+        {
+            try
             {
-                case "#计次循环":
-                    int i;
-                    return null;
-                default:
-                    return null;       
-            }  
+                var listData = new Dictionary<string, String>();
+                listData["#计次循环"] = "for(int i = 0;i < x;i++)";
+                return listData[Case];
+            }
+            catch(KeyNotFoundException e)
+            {
+                MessageBox.Show("Error:SpeciaFuncitonget所需内容不存在");
+                Environment.Exit(0);
+                return null;
+            }
         }
+
+        public static String FuncitonBlockSpecia(String CodeBlock)
+        {
+            String MinddleCodeBlock = function.takeMiddleorMinddle(CodeBlock);
+            String CodeBlockNameMain = function.takeMiddleMain(CodeBlock);
+            String pattern = @"\((.*?)\)";
+            String CodeBlockages = Regex.Match(CodeBlockNameMain, pattern).Groups[1].Value;
+            String Case = CodeBlockNameMain.Replace(CodeBlockages,"");
+            Case = Case.Replace("(){}", "");
+            return Case;
+        }
+
+    
+       
 
 
     }
