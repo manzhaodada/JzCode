@@ -64,7 +64,6 @@ namespace JzCode
             foreach (Match match in matches)
             {
                 tempCodeBlock += match.Groups[1].Value;
-                
             }
             tempCodeBlock += "}";
             return tempCodeBlock;
