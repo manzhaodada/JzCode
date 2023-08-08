@@ -8,6 +8,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Diagnostics.PerformanceData;
 
 namespace JzCode
 {
@@ -48,12 +49,61 @@ namespace JzCode
             foreach (Match match in matches)
             {
                 temp += match.Groups[1].Value;
-
             }
+            temp = takeMiddleorMinddle(CodeBlock);
             temp = CodeBlock.Replace(temp, "");
             temp = temp.Replace("{", "").Replace("}", "");
             temp = temp.Trim();
             return temp;
+        }
+
+
+        public static String[] takeJoins(String Code)
+        { 
+            //取参数 takeMiddleMain处理后的数据由takeJoins取出参数，并将每个参数存入一个String[]并返回
+            int count = takeJoinsNumber(Code);
+            String[] Joins = new String[count];
+            int startIndex = Code.IndexOf('(') + 1;
+            int endIndex = Code.IndexOf(')');
+            String content = Code.Substring(startIndex, endIndex - startIndex);
+
+            int StartIndex = 0;
+            int EndIndex = 0;
+            int numbers = 0;
+            while (EndIndex < content.Length)
+            {
+                if (content[EndIndex] == ',')
+                {
+                    String value = content.Substring(StartIndex, EndIndex - StartIndex);
+                    Joins[numbers] = value;
+                    numbers++;
+                    StartIndex = EndIndex + 1;
+                }
+
+                EndIndex++;
+            }
+
+            // 添加最后一个值
+            String lastValue = content.Substring(StartIndex, EndIndex - StartIndex);
+            Joins[numbers] = lastValue;
+            numbers++;
+
+            return Joins;
+        }
+
+        public static int takeJoinsNumber(string Code)
+        {
+            //分隔参数内的,返回,的个数
+            int count = 0;
+            int index = Code.IndexOf(",");
+
+            while (index != -1)
+            {
+                count++;
+                index = Code.IndexOf(",", index + 1);
+            }
+
+            return count + 1; // 加上最后一个值
         }
 
         public static String takeMiddleorMinddle(String CodeBlock)
@@ -64,7 +114,6 @@ namespace JzCode
             foreach (Match match in matches)
             {
                 tempCodeBlock += match.Groups[1].Value;
-                
             }
             tempCodeBlock += "}";
             return tempCodeBlock;
@@ -113,9 +162,6 @@ namespace JzCode
             return string.Join("\n", block.ToArray());
 
         }
-
-        
-
 
         public static bool equaldBraces(String Line)
         {
