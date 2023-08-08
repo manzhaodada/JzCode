@@ -93,7 +93,7 @@ namespace JzCode
 
         public static int takeJoinsNumber(string Code)
         {
-            //分隔参数内的,返回,的个数
+            //分隔参数内的,返回逗号分隔符的个数
             int count = 0;
             int index = Code.IndexOf(",");
 
