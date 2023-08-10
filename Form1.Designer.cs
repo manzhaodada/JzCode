@@ -134,9 +134,9 @@
         private System.Windows.Forms.Button button_Open;
         private System.Windows.Forms.Button button_Save;
         private System.Windows.Forms.Button button_Teaching;
-        private System.Windows.Forms.TextBox textBox_Code;
         private System.Windows.Forms.OpenFileDialog openFileDialog_Open;
         private System.Windows.Forms.SaveFileDialog saveFileDialog_Save;
+        public System.Windows.Forms.TextBox textBox_Code;
     }
 }
 
