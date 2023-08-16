@@ -12,6 +12,8 @@ using JzCode;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Runtime.Remoting.Contexts;
+using System.Security.Principal;
+using System.Threading;
 
 namespace JZ计算机软件开发语言
 {
@@ -25,13 +27,52 @@ namespace JZ计算机软件开发语言
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+
+            bool isAdminSystem = principal.IsInRole(WindowsBuiltInRole.Administrator);
+            //if (isAdminSystem == false)
+            //{
+            //    MessageBox.Show("JZCode当前为非管理员权限运行,稍后程序将尝试以管理员身份启动JZCode,若启动失败\n请右击JZCode软件图标，使用管理员身份运行");
+            //    string filepath = System.IO.Directory.GetCurrentDirectory();
+            //    filepath += @"\JzCode.exe";
+            //    ProcessStartInfo psi = new ProcessStartInfo(filepath);
+            //    psi.Verb = "runas";
+            //    try
+            //    {
+            //        Process.Start(psi);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        MessageBox.Show("无法获取管理员权限：" + ex.Message);
+            //        Process process = Process.GetCurrentProcess();
+            //        process.Kill();
+            //    }
+            //    finally
+            //    {
+            //        Process process = Process.GetCurrentProcess();
+            //        process.Kill();
+            //    }
+            //}
+
 
         }
         private static String improt = "import java.util.*;\nimport java.math.*;\nimport java.io.*;\n";
+        private void skipnull()
+        {
+            List<string> lines =
+            getTextBox_Code().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var skipnull = lines.Where(line => !IsNullOrWhiteSpace(line));
+            setTextBox_Code(string.Join(Environment.NewLine, skipnull.ToArray()));
+        }
+        private static bool IsNullOrWhiteSpace(string value)
+        {
+            return value == null || value.Trim() == string.Empty;
+        }
 
         private void button_Run_Click(object sender, EventArgs e)
         {
-
+            skipnull();
             String filePath = @"C:\JzTemp\";
 
             // 检查文件路径是否存在
@@ -49,11 +90,16 @@ namespace JZ计算机软件开发语言
                 {
                     String temp = new function().randomLetter(random.Next(26));
                     filePath = filePath + temp;
+                    
                 }
 
                 // 将文件名扩展为".jz"
                 filePath = filePath + ".jz";
-
+                String codetemp = getTextBox_Code();
+                codetemp = codetemp.Replace("（","(");
+                codetemp = codetemp.Replace("）", ")");
+                codetemp = codetemp.Replace("；", ";");
+                setTextBox_Code(codetemp);
                 // 将文本框中的代码写入文件
                 File.WriteAllText(filePath, this.textBox_Code.Text, Encoding.UTF8);
             }
@@ -75,6 +121,7 @@ namespace JZ计算机软件开发语言
 
                 // 将文本框中的代码写入文件
                 File.WriteAllText(filePath, this.textBox_Code.Text);
+
             }
 
             String lineCode, Code = null;
@@ -87,8 +134,9 @@ namespace JZ计算机软件开发语言
             for (int i = 0; i < line; i++)
             {
                 lineCode = lines[i];
-                lines[i] = function.translateJzCode(lineCode,i);
+                lines[i] = function.translateJzCode(lineCode, i, getTextBox_Code());
             }
+
 
             // 将翻译为源文件后的代码拼接成String
             for (int i = 0; i < line; i++)
@@ -99,38 +147,80 @@ namespace JZ计算机软件开发语言
             // 拼接improt引用库和代码部分
             String codeTemp = improt + Code;
 
-            File.WriteAllText(@"D:\jz.java", codeTemp);
+            File.WriteAllText(@"C:\JzTemp\run.java", codeTemp);
 
             // 启动cmd进程执行代码文件
-            new function().cmdProcessStart(@"D:\jz.jz");
+            new function().cmdProcessStart(@"C:\JzTemp\run.java");
         }
 
         private void Button_DaBao_Click(object sender, EventArgs e)
         {
-            String lineCode, Code = null;
-            lineCode = File.ReadAllText(@"D:\jz.jz");
-            List<string> lines =
-            lineCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            int line = lines.Count;
-            int on, off = 0;
-            bool bracesEqualsState = false;
-            for (int i = 0; i < line; i++)
+            string classname = function.getMainClassName(getTextBox_Code());
+            if (Directory.Exists(@"C:\JzTemp") == true)
             {
-                lineCode = lines[i];
-                lines[i] = function.translateJzCode(lineCode,i);
+                if (File.Exists(@"C:\JzTemp\run.java") == true)
+                {
+                    try
+                    {
+                        File.Move(@"C:\JzTemp\run.java", @"C:\JzTemp\" + classname + ".java");
+                    }
+                    catch(IOException ex)
+                    {
+                        MessageBox.Show("编译文件失败\n" + ex.Message);
+                        if (Directory.Exists(@"C:\JzTemp"))
+                        {
+                            try
+                            {
+                                Directory.Delete(@"C:\JzTemp");
+                            }
+                            catch (IOException ioex)
+                            {
+                                MessageBox.Show("编译过程出现错误\n" + ioex.Message);
+                            }
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        MessageBox.Show("编译出现错误\n" + ex.Message);
+                    }
+                    Thread thread = new Thread(threadCMD);
+                    thread.Start(classname);
+                    File.WriteAllText(@"C:\JzTemp\release.config", classname);
+                }
+                else
+                {
+                    MessageBox.Show("编译文件不存在，请运行一次后再次尝试编译");
+                }
             }
-            for (int i = 0; i < line; i++)
+            else
             {
-                Code = Code + lines[i] + "\n";
+                MessageBox.Show("Cache文件不存在，请运行一次后再次尝试编译");
             }
-            for (int i = 0; i < line; i++)
-            {
+        }
 
+        private void threadCMD(object join)
+        {
+            try
+            {
+                string classname = join.ToString();
+                Process cmdProcess = new Process();
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+
+                string filepath = System.IO.Directory.GetCurrentDirectory();
+                startInfo.FileName = "cmd.exe";
+                startInfo.Arguments = "/k " + filepath + @"\sdk\bin\javac.exe" + " -encoding UTF-8 " + @"C:\JzTemp\" + classname + ".java";
+                //startInfo.Arguments = "/k " +  "javac" + " -encoding UTF-8 " + @"C:\JzTemp\" + classname + ".java";
+                startInfo.RedirectStandardOutput = false;
+                startInfo.UseShellExecute = true;
+                startInfo.CreateNoWindow = false;
+
+                cmdProcess.StartInfo = startInfo;
+                cmdProcess.Start();
             }
-            //已知一个文本被以行分割装在了lines的一个list内，一个int变量linenum控制当前为第多少行，现在需要完成从该行开始，寻找
-            String codeTemp = improt + Code;
-            File.WriteAllText(@"D:\jz.java", codeTemp);
-            new function().cmdProcessStart(@"D:\jz.jz");
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         private void button_Open_Click(object sender, EventArgs e)
         {
@@ -145,10 +235,16 @@ namespace JZ计算机软件开发语言
             String filePath = openFileDialog.FileName;
             this.textBox_Code.Text = null;
             this.textBox_Code.Text = File.ReadAllText(filePath, Encoding.UTF8);
+            String codetemp = getTextBox_Code();
+            codetemp = codetemp.Replace("（", "(");
+            codetemp = codetemp.Replace("）", ")");
+            codetemp = codetemp.Replace("；", ";");
+            setTextBox_Code(codetemp);
         }
 
         private void button_Save_Click(object sender, EventArgs e)
         {
+            skipnull();
             String mainClassName = function.getMainClassName(this.textBox_Code.Text);
             if (mainClassName==("error: 主类名称未设置") ||
                 mainClassName==("error:代码内未找到主类"))
@@ -168,16 +264,21 @@ namespace JZ计算机软件开发语言
         {
             SaveFileDialog saveFileDialog = sender as SaveFileDialog;
             String filePath = saveFileDialog.FileName;
-            File.WriteAllText(filePath, getTextBox_Code());
+            String codetemp = getTextBox_Code();
+            codetemp = codetemp.Replace("（", "(");
+            codetemp = codetemp.Replace("）", ")");
+            codetemp = codetemp.Replace("；", ";");
+            setTextBox_Code(codetemp);
+            File.WriteAllText(filePath, codetemp);
         }
 
         public bool setTextBox_Code(String Content)
         {
-            if (Content==(this.textBox_Code.Text))
+            if (Content != this.textBox_Code.Text)
             {
                 String temp = this.textBox_Code.Text;
                 this.textBox_Code.Text = Content;
-                if (temp!=(Content))
+                if (temp!=Content)
                 {
                     return true;
                 }
@@ -198,15 +299,6 @@ namespace JZ计算机软件开发语言
             return this.textBox_Code.Text.ToString();
         }
 
-        private void button_Teaching_Click(object sender, EventArgs e)
-        {
-            //String temp = "";
-            //temp = specialdatabase.translationOfSpecialFunction(getTextBox_Code(), 0);
-            //MessageBox.Show(temp);
-            function.test();
-
-        }
-
 
         public Form1 getForm1()
         {
@@ -214,5 +306,13 @@ namespace JZ计算机软件开发语言
             return tempForm;
             
         }
+
+        private void button_Release_Click(object sender, EventArgs e)
+        {
+            skipnull();
+            new Form_Release(getTextBox_Code()).Show();
+        }
+
+
     }
 }

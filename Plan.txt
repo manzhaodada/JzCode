@@ -2,3 +2,4 @@
 完成
 do{}while();
 for()——计次循环
+run的块处理如dowhile可以在dowhile处理完以后，直接在run待处理的部分内删除这一部分，直接处理下一部分

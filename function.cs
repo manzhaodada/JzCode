@@ -9,57 +9,84 @@ using System.Windows.Forms;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Diagnostics.PerformanceData;
+using System.Runtime.Remoting.Contexts;
 
 namespace JzCode
 {
     internal class function
     {
-        public static string translateJzCode(string lineJzCode,int lineNumber)
+        public static int skipLines(string currentLine, int currentIndex, string codeText)
         {
-            //翻译模块，将中文代码翻译为代码源文件
-            String tempCode = lineJzCode;
-            string ReturnTranslationOfSpecialFunction = "";
-            for (int i = 0; i < database.chineseData.Length; i++)
+            foreach (string specialFunction in specialdatabase.speciaFuncitonBlock)
+            {
+                if (currentLine.Contains(specialFunction))
+                {
+                    string block = takeMiddle(currentIndex, codeText);
+
+                    int blockLineCount = block.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).Length;
+                    MessageBox.Show((block).ToString()) ;
+                    MessageBox.Show(blockLineCount.ToString() + "\n" + (currentIndex + blockLineCount - 1).ToString());
+
+                    return currentIndex + blockLineCount - 1; 
+                }
+            }
+            return currentIndex;
+        }
+
+        public static string translateJzCode(string lineJzCode,int lineNumber,string CodeText)
+        {
+            try
+            {
+                //翻译模块，将中文代码翻译为代码源文件
+                String tempCode = lineJzCode;
+                string ReturnTranslationOfSpecialFunction = "";
+                for (int i = 0; i < database.chineseData.Length; i++)
                 //翻译基础语句
-            {
-                string temp = database.chineseData[i];
-                bool state = lineJzCode.Contains(temp);
-                if (state == true)
                 {
-                    temp = database.getDataBase(temp);
-                    lineJzCode = lineJzCode.Replace(database.chineseData[i], temp);
+                    string temp = database.chineseData[i];
+                    bool state = lineJzCode.Contains(temp);
+                    if (state == true)
+                    {
+                        temp = database.getDataBase(temp);
+                        lineJzCode = lineJzCode.Replace(database.chineseData[i], temp);
+                    }
+                }
+
+                for (int i = 0; i < specialdatabase.englishbase.Length; i++)
+                {
+                    //翻译特殊语句
+                    string temp = specialdatabase.Chinesebase[i];
+                    bool state = lineJzCode.Contains(temp);
+                    if (state == true)
+                    {
+                        temp = specialdatabase.englishbase[i];
+                        lineJzCode = lineJzCode.Replace(specialdatabase.Chinesebase[i], temp);
+                    }
+                }
+
+                foreach (String i in specialdatabase.specialFunctionName)
+                {
+                    bool state = lineJzCode.Contains(i);
+                    if (state == true)
+                    {
+                        ReturnTranslationOfSpecialFunction = specialdatabase.getSpeciaFuncitonBlock(i, lineJzCode, CodeText,lineNumber);
+                        return ReturnTranslationOfSpecialFunction;
+                    }
+                }
+
+                ReturnTranslationOfSpecialFunction = lineJzCode;
+                if (tempCode == lineJzCode)
+                {
+                    return lineJzCode;
+                }
+                else
+                {
+                    return lineJzCode;
                 }
             }
-
-            foreach (String i in specialdatabase.speciaFuncitonBlock)
+            catch (Exception ex)
             {
-                bool state = lineJzCode.Contains(i);
-                if (state == true)
-                {
-                    ReturnTranslationOfSpecialFunction = specialdatabase.getSpeciaFuncitonBlock(i, lineJzCode, "");
-                    return ReturnTranslationOfSpecialFunction;
-                }
-            }
-
-            for (int i = 0; i < specialdatabase.englishbase.Length; i++)
-            {
-                //翻译特殊语句
-                string temp = specialdatabase.Chinesebase[i];
-                bool state = lineJzCode.Contains(temp);
-                if (state == true)
-                {
-                    temp = specialdatabase.englishbase[i];
-                    lineJzCode = lineJzCode.Replace(specialdatabase.Chinesebase[i], temp);
-                }
-            }
-
-            ReturnTranslationOfSpecialFunction = lineJzCode;
-            if (tempCode==lineJzCode)
-            {
-                return lineJzCode;
-            }
-            else
-            {
+                MessageBox.Show("error" + ex.Message);
                 return lineJzCode;
             }
             //todo 后续改为跳转至特殊函数处理 (***已处理***)
@@ -67,25 +94,19 @@ namespace JzCode
 
         public static String translation(String Code)
         {
-            // 循环遍历特殊函数名称数组
             foreach (var functionName in specialdatabase.specialFunctionName)
             {
-                // 当代码中包含特殊函数时执行循环
                 while (Code.Contains(functionName))
                 {
-                    // 获取特殊函数的起始索引和结束索引
                     int startIndex = Code.IndexOf(functionName);
                     int endIndex = Code.IndexOf("}", startIndex);
 
-                    // 计算特殊函数代码块的长度，并提取代码块
                     int blockLength = endIndex - startIndex + 1;
                     String block = Code.Substring(startIndex, blockLength);
 
-                    // 提取特殊函数的参数值和内部代码块
                     String caseValue = block.Substring(0, block.IndexOf("("));
                     String innerCode = block.Substring(block.IndexOf("{") + 1, block.Length - block.IndexOf("{") - 2);
 
-                    // 初始化中间代码块为空字符串以备后用
                     String codeBlockMiddle = "";
                     int innerStartIndex = 0;
                     int innerEndIndex = 0;
@@ -100,7 +121,7 @@ namespace JzCode
                     }
 
                     // 调用特殊函数处理函数，并替换原始代码中的特殊函数代码块
-                    String translatedBlock = specialdatabase.getSpeciaFuncitonBlock(caseValue, innerCode, codeBlockMiddle);
+                    String translatedBlock = specialdatabase.getSpeciaFuncitonBlock(caseValue, innerCode, codeBlockMiddle,0);
                     Code = Code.Replace(block, translatedBlock);
                 }
             }
@@ -261,6 +282,7 @@ namespace JzCode
             String[] letterArrays = { "a", "b", "c", "d", "e", 
                 "f", "g", "h", "i", "j", "k", "l", "m", "n" ,
                 "o","p","q","r","s","t","u","v","w","x","y","z"};
+
             return letterArrays[randomNext];
         }
 
@@ -301,30 +323,34 @@ namespace JzCode
         {
             // 处理cmd进程启动
 
-            // 将路径中的文件扩展名从".jz"替换为".java"
-            Path = Path.Replace(".jz", ".java");
 
             // 检查路径是否包含"jz"
-            if (Path.Contains("jz") == true)
+            if (Path.Contains("java") == true)
             {
                 // 检查文件是否存在
                 if (File.Exists(Path) == true)
                 {
-                    // 创建cmd进程
-                    Process cmdProcess = new Process();
-                    ProcessStartInfo startInfo = new ProcessStartInfo();
+                    try
+                    {
+                        Process cmdProcess = new Process();
+                        ProcessStartInfo startInfo = new ProcessStartInfo();
 
-                    // 设置cmd进程的启动信息
-                    startInfo.FileName = "cmd.exe";
-                    startInfo.Arguments = "/k " + "echo jz计算机软件编程语言由得快科技开发" +
-                        "制作 & echo 若发现bug请联系QQ:2241105683" + "& java -Dfile.encoding=UTF-8 " + Path;
+                        // 设置cmd进程的启动信息
+                        startInfo.FileName = "cmd.exe";
+                        startInfo.Arguments = "/k " + "java -Dfile.encoding=UTF-8 " + Path;
 
-                    startInfo.RedirectStandardOutput = false;
-                    startInfo.UseShellExecute = true;
-                    startInfo.CreateNoWindow = false;
+                        startInfo.RedirectStandardOutput = false;
+                        startInfo.UseShellExecute = true;
+                        startInfo.CreateNoWindow = false;
 
-                    cmdProcess.StartInfo = startInfo;
-                    cmdProcess.Start();
+                        cmdProcess.StartInfo = startInfo;
+                        cmdProcess.Start();
+                        
+                    }
+                    catch(Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
                 else
                 {

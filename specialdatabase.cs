@@ -30,7 +30,7 @@ namespace JZ计算机软件开发语言
 
         public static String[] specialFunctionName =
         {
-            "#循环后判断"
+            "#计次循环","#循环后判断","#值相等"
         };
 
         public static String lineSpecialOrFunction(String Line)
@@ -50,23 +50,56 @@ namespace JZ计算机软件开发语言
 
         public static String[] speciaFuncitonBlock =
         {
-            "#计次循环"
+            "#循环后判断"
         };
 
-        public static String getSpeciaFuncitonBlock(String Case,String CodeBlock,String CodeBlockMiddle)
+        public static String getSpeciaFuncitonBlock(String Case,String CodeBlock,String CodeBlockText,int linenumber)
         {
             try
             {
-                MessageBox.Show(CodeBlock);
                 var listData = new Dictionary<string, String>();
                 listData["#计次循环"] = "for(int jcxhnzwbl = 0;jcxhnzwbl <= x;jcxhnzwbl++){";
+                listData["#循环后判断"] = "do{";
+                listData["#值相等"] = "ax.equals(bx)";
                 String temp = listData[Case];
                 if (Case==("#计次循环"))
                 {
                     String x = function.takeJoins(CodeBlock)[0];
                     temp = temp.Replace("x", x);
-                    MessageBox.Show(temp);
                     return temp;
+                }
+                else if (Case == "#循环后判断")
+                {
+                    String x = function.takeMiddle(linenumber, CodeBlockText);
+                    MessageBox.Show(x);
+                    List<string> lines =
+                    x.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                    x = "";
+                    for(int i = 0; i < lines.Count; i++)
+                    {
+                       x = x+function.translateJzCode(lines[i],i,x)+"\n";
+                    }
+                    MessageBox.Show(x);
+                    x = function.takeMiddleorMinddle(x);
+                    MessageBox.Show(x);
+                    String[] joins = function.takeJoins(lines[0]);
+                    joins[0] = function.translateJzCode(joins[0], 0, joins[0]);
+                    MessageBox.Show(temp + x + "while(" + joins[0] + ");");
+                    return temp + x + "while(" + joins[0] + ");" ;
+                }
+                else if(Case == "#值相等")
+                {
+                    Match match = Regex.Match(CodeBlock, @"#值相等\([^)]+\)");
+                    string a = function.takeJoins(match.Value)[0];
+                    string b = function.takeJoins(match.Value)[1];
+                    temp = temp.Replace("ax", a);
+                    temp = temp.Replace("bx", b);
+                    //#如果(#值相等("a","b"));
+                    
+                    
+                    CodeBlock = CodeBlock.Replace(match.Value, temp);
+                    
+                    return CodeBlock;
                 }
                 return temp;
             }
@@ -80,67 +113,91 @@ namespace JZ计算机软件开发语言
        
         public static String translationOfSpecialFunction(String Code, int LineNumber)
         {
-            bool state = false;
-            String CodeHead = null;
-            String CodeBlock = null;
-            String CodeTemp = null;
-            foreach (String temp in speciaFuncitonBlock)
+            try
             {
-                state = Code.Contains(temp);
-                if (state == true)
+                bool state = false;
+                String CodeHead = null;
+                String CodeBlock = null;
+                String CodeTemp = null;
+                foreach (String temp in speciaFuncitonBlock)
                 {
-                    CodeTemp = function.takeMiddle(LineNumber, new Form1().getTextBox_Code());
-                    //String[] CodeJoins = function.takeJoins(CodeTemp);
-                    CodeBlock = function.takeMiddleorMinddle(CodeTemp);
-                    String pattern = @"#(.*?)\(";
-                    CodeHead = Regex.Match(Code, pattern).Groups[1].Value;
-                    CodeHead = CodeHead.Trim();
+                    state = Code.Contains(temp);
+                    if (state == true)
+                    {
+                        CodeTemp = function.takeMiddle(LineNumber, new Form1().getTextBox_Code());
+                        CodeBlock = function.takeMiddleorMinddle(CodeTemp);
+                        String pattern = @"#(.*?)\(";
+                        CodeHead = Regex.Match(Code, pattern).Groups[1].Value;
+                        CodeHead = CodeHead.Trim();
 
-                    return getSpeciaFuncitonBlock(temp, Code, CodeBlock);
+                        return getSpeciaFuncitonBlock(temp, Code, CodeBlock,LineNumber);
+                    }
                 }
+                return Code;
             }
-            return Code;
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("error: " + ex.Message);
+                return Code; 
+            }
         }
 
         public static string translateJzCodeBlock(string CodeBlock, int LineNumber)
         {
 
-            List<string> lines =
-            CodeBlock.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            int count = lines.Count;
-            for (int i = LineNumber; i < count; i++)
+            try
             {
-                foreach (String temp in specialdatabase.speciaFuncitonBlock)
+                List<string> lines =
+                CodeBlock.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                int count = lines.Count;
+                for (int i = LineNumber; i < count; i++)
                 {
-                    if (lines[i].Contains(temp))
+                    foreach (String temp in specialdatabase.speciaFuncitonBlock)
                     {
-                        string tempBlock = null;
-                        for (int j = i; j < count; j++)
+                        if (lines[i].Contains(temp))
                         {
-                            tempBlock = tempBlock + lines[j] + "\n";
+                            string tempBlock = null;
+                            for (int j = i; j < count; j++)
+                            {
+                                tempBlock = tempBlock + lines[j] + "\n";
+                            }
+
+                            tempBlock = specialdatabase.getSpeciaFuncitonBlock(temp, tempBlock, function.takeMiddleorMinddle(tempBlock),LineNumber);
+                            translateJzCodeBlock(tempBlock, i);
+                            return tempBlock;
                         }
 
-                        tempBlock = specialdatabase.getSpeciaFuncitonBlock(temp, tempBlock, function.takeMiddleorMinddle(tempBlock));
-                        translateJzCodeBlock(tempBlock, i);
-                        return tempBlock;
                     }
-
                 }
+                return CodeBlock;
             }
-            return CodeBlock;
+            catch (Exception ex)
+            {
+                MessageBox.Show("error: " + ex.Message);
+                return CodeBlock;
+            }
         }
 
 
 
         public static String FuncitonBlockSpecia(String CodeBlock)
         {
-            String MinddleCodeBlock = function.takeMiddleorMinddle(CodeBlock);
-            String CodeBlockNameMain = function.takeMiddleMain(CodeBlock);
-            String pattern = @"\((.*?)\)";
-            String CodeBlockages = Regex.Match(CodeBlockNameMain, pattern).Groups[1].Value;
-            String Case = CodeBlockNameMain.Replace(CodeBlockages,"");
-            Case = Case.Replace("(){}", "");
-            return Case;
+            try
+            {
+                String MinddleCodeBlock = function.takeMiddleorMinddle(CodeBlock);
+                String CodeBlockNameMain = function.takeMiddleMain(CodeBlock);
+                String pattern = @"\((.*?)\)";
+                String CodeBlockages = Regex.Match(CodeBlockNameMain, pattern).Groups[1].Value;
+                String Case = CodeBlockNameMain.Replace(CodeBlockages, "");
+                Case = Case.Replace("(){}", "");
+                return Case;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("error: " + ex.Message);
+                return CodeBlock;
+            }
         }
 
     

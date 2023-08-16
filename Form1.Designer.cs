@@ -32,7 +32,7 @@
             this.Button_DaBao = new System.Windows.Forms.Button();
             this.button_Open = new System.Windows.Forms.Button();
             this.button_Save = new System.Windows.Forms.Button();
-            this.button_Teaching = new System.Windows.Forms.Button();
+            this.button_Release = new System.Windows.Forms.Button();
             this.textBox_Code = new System.Windows.Forms.TextBox();
             this.openFileDialog_Open = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog_Save = new System.Windows.Forms.SaveFileDialog();
@@ -78,15 +78,15 @@
             this.button_Save.UseVisualStyleBackColor = true;
             this.button_Save.Click += new System.EventHandler(this.button_Save_Click);
             // 
-            // button_Teaching
+            // button_Release
             // 
-            this.button_Teaching.Location = new System.Drawing.Point(487, 1);
-            this.button_Teaching.Name = "button_Teaching";
-            this.button_Teaching.Size = new System.Drawing.Size(115, 38);
-            this.button_Teaching.TabIndex = 4;
-            this.button_Teaching.Text = "教学实例";
-            this.button_Teaching.UseVisualStyleBackColor = true;
-            this.button_Teaching.Click += new System.EventHandler(this.button_Teaching_Click);
+            this.button_Release.Location = new System.Drawing.Point(487, 1);
+            this.button_Release.Name = "button_Release";
+            this.button_Release.Size = new System.Drawing.Size(115, 38);
+            this.button_Release.TabIndex = 4;
+            this.button_Release.Text = "打包发行版";
+            this.button_Release.UseVisualStyleBackColor = true;
+            this.button_Release.Click += new System.EventHandler(this.button_Release_Click);
             // 
             // textBox_Code
             // 
@@ -114,7 +114,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1258, 664);
             this.Controls.Add(this.textBox_Code);
-            this.Controls.Add(this.button_Teaching);
+            this.Controls.Add(this.button_Release);
             this.Controls.Add(this.button_Save);
             this.Controls.Add(this.button_Open);
             this.Controls.Add(this.Button_DaBao);
@@ -133,7 +133,7 @@
         private System.Windows.Forms.Button Button_DaBao;
         private System.Windows.Forms.Button button_Open;
         private System.Windows.Forms.Button button_Save;
-        private System.Windows.Forms.Button button_Teaching;
+        private System.Windows.Forms.Button button_Release;
         private System.Windows.Forms.OpenFileDialog openFileDialog_Open;
         private System.Windows.Forms.SaveFileDialog saveFileDialog_Save;
         public System.Windows.Forms.TextBox textBox_Code;
