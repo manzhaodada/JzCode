@@ -70,22 +70,24 @@ namespace JZ计算机软件开发语言
                 }
                 else if (Case == "#循环后判断")
                 {
+                    //String x = function.takeMiddle(linenumber, CodeBlockText);
+                    //MessageBox.Show(x);
+                    //List<string> lines =
+                    //x.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                    //x = "";
+                    //for(int i = 0; i < lines.Count; i++)
+                    //{
+                    //   x = x+function.translateJzCode(lines[i],i,x)+"\n";
+                    //}
+                    //MessageBox.Show(x);
+                    //x = function.takeMiddleorMinddle(x);
+                    //MessageBox.Show(x);
+                    //String[] joins = function.takeJoins(lines[0]);
+                    //joins[0] = function.translateJzCode(joins[0], 0, joins[0]);
+                    //MessageBox.Show(temp + x + "while(" + joins[0] + ");");
+                    //return temp + x + "while(" + joins[0] + ");" ;
                     String x = function.takeMiddle(linenumber, CodeBlockText);
-                    MessageBox.Show(x);
-                    List<string> lines =
-                    x.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                    x = "";
-                    for(int i = 0; i < lines.Count; i++)
-                    {
-                       x = x+function.translateJzCode(lines[i],i,x)+"\n";
-                    }
-                    MessageBox.Show(x);
-                    x = function.takeMiddleorMinddle(x);
-                    MessageBox.Show(x);
-                    String[] joins = function.takeJoins(lines[0]);
-                    joins[0] = function.translateJzCode(joins[0], 0, joins[0]);
-                    MessageBox.Show(temp + x + "while(" + joins[0] + ");");
-                    return temp + x + "while(" + joins[0] + ");" ;
+                    List<String> list = x.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 }
                 else if(Case == "#值相等")
                 {

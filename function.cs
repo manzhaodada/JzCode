@@ -308,6 +308,7 @@ namespace JzCode
                         }
                         else
                         {
+                            temp = temp.Trim();
                             return temp;
                         }
                     }

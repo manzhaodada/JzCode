@@ -33,9 +33,9 @@ namespace JZ计算机软件开发语言
             bool isAdminSystem = principal.IsInRole(WindowsBuiltInRole.Administrator);
             //if (isAdminSystem == false)
             //{
-            //    MessageBox.Show("JZCode当前为非管理员权限运行,稍后程序将尝试以管理员身份启动JZCode,若启动失败\n请右击JZCode软件图标，使用管理员身份运行");
+            //    MessageBox.Show("JZ全中文编程辅助工具V1.0当前为非管理员权限运行,稍后程序将尝试以管理员身份启动JZ全中文编程辅助工具V1.0,若启动失败\n请右击JZ全中文编程辅助工具V1.0软件图标，使用管理员身份运行");
             //    string filepath = System.IO.Directory.GetCurrentDirectory();
-            //    filepath += @"\JzCode.exe";
+            //    filepath += @"\JZ全中文编程辅助工具V1.0.exe";
             //    ProcessStartInfo psi = new ProcessStartInfo(filepath);
             //    psi.Verb = "runas";
             //    try
@@ -313,6 +313,9 @@ namespace JZ计算机软件开发语言
             new Form_Release(getTextBox_Code()).Show();
         }
 
+        private void textBox_Code_TextChanged(object sender, EventArgs e)
+        {
 
+        }
     }
 }

@@ -97,7 +97,9 @@
             this.textBox_Code.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox_Code.Size = new System.Drawing.Size(1255, 615);
             this.textBox_Code.TabIndex = 5;
-            this.textBox_Code.Text = "#主类 jz{\r\n\r\n    #程序入口{\r\n        #打印并换行(\"Hello JZ\");\r\n    }\r\n\r\n}";
+            this.textBox_Code.Text = "#主类 jz{\r\n\r\n    #程序入口{\r\n        \r\n        #打印并换行(\"Hello JZ\");\r\n        \r\n    }\r\n\r\n" +
+    "}";
+            this.textBox_Code.TextChanged += new System.EventHandler(this.textBox_Code_TextChanged);
             // 
             // openFileDialog_Open
             // 
@@ -120,7 +122,7 @@
             this.Controls.Add(this.Button_DaBao);
             this.Controls.Add(this.button_Run);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "JZ全中文编程辅助工具V1.0";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
